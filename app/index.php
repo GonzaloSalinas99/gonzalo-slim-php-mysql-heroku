@@ -16,6 +16,7 @@ require_once './db/AccesoDatos.php';
 // require_once './middlewares/Logger.php';
 
 require_once './controllers/UsuarioController.php';
+require_once './controllers/PizzaController.php';
 
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -42,5 +43,10 @@ $app->get('[/]', function (Request $request, Response $response) {
     return $response;
 
 });
+
+$app->group('/pizzas', function (RouteCollectorProxy $group) {
+  $group->post('[/]', \PizzaController::class . ':CargarUno');
+});
+
 
 $app->run();
