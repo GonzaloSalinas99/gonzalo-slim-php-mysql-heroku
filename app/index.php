@@ -13,10 +13,12 @@ use Slim\Routing\RouteContext;
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once './db/AccesoDatos.php';
-// require_once './middlewares/Logger.php';
+require_once './middlewares/EntradaMiddlewares.php';
 
 require_once './controllers/UsuarioController.php';
 require_once './controllers/PizzaController.php';
+require_once './controllers/LoginController.php';
+
 
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -32,6 +34,12 @@ $app->addErrorMiddleware(true, true, true);
 $app->addBodyParsingMiddleware();
 
 // Routes
+
+$app->post('/login', \LoginController::class . ':VerificarLogueo');
+
+
+
+
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
@@ -42,11 +50,12 @@ $app->get('[/]', function (Request $request, Response $response) {
     $response->getBody()->write("Slim Framework 4 PHPHPHP");
     return $response;
 
-});
+})->add(new EntradaMiddlewares());
 
 $app->group('/pizzas', function (RouteCollectorProxy $group) {
   $group->post('[/]', \PizzaController::class . ':CargarUno');
 });
+
 
 
 $app->run();
